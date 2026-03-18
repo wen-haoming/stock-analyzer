@@ -3,16 +3,16 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "main": "dist-electron/main.mjs",
   "scripts": {
     "dev": "vite",
     "dev:server": "npx nitro dev",
-    "build": "tsc -b && vite build",
+    "build": "vite build && npm run build:server",
     "build:server": "npx nitro build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "electron:dev": "electron-vite dev",
-    "electron:build": "electron-vite build",
-    "electron:package": "electron-builder --mac"
+    "build:electron": "tsc -p tsconfig.electron.json",
+    "electron:dev": "npm run build:electron && electron . --dev",
+    "electron:start": "npm run build && npm run build:electron && electron .",
+    "electron:package": "npm run build && npm run build:electron && electron-builder --mac"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
@@ -20,6 +20,7 @@
     "ai": "^6.0.116",
     "antd": "^6.3.3",
     "better-sqlite3": "^12.8.0",
+    "cheerio": "^1.0.0",
     "dayjs": "^1.11.20",
     "drizzle-orm": "^0.45.1",
     "lightweight-charts": "^5.1.0",
@@ -27,7 +28,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "vercel-ai": "^0.0.0",
-    "zustand": "^5.0.12"
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
@@ -39,7 +40,6 @@
     "@vitejs/plugin-react": "^6.0.0",
     "electron": "^41.0.3",
     "electron-builder": "^26.8.1",
-    "electron-vite": "^5.0.0",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
@@ -52,13 +52,24 @@
   "build": {
     "appId": "com.stockanalyzer.app",
     "productName": "AI股票分析",
-    "mac": {
-      "target": "dmg",
-      "icon": "resources/icon.icns"
+    "directories": {
+      "output": "release"
     },
     "files": [
       "dist/**/*",
-      "dist-electron/**/*"
+      "dist-electron/**/*",
+      "server/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "target": "dmg",
+      "icon": "public/icon.icns"
+    },
+    "extraResources": [
+      {
+        "from": "server",
+        "to": "server"
+      }
     ]
   }
 }
