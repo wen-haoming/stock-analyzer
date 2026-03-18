@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI股票分析工具 - 界面预览</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { color: #fff; text-align: center; margin-bottom: 30px; font-size: 28px; }
+    
+    /* Main Interface */
+    .interface { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .header { background: #001529; color: #fff; padding: 16px 24px; display: flex; align-items: center; gap: 16px; }
+    .header h2 { font-size: 18px; margin: 0; }
+    .header input { flex: 1; padding: 8px 16px; border: none; border-radius: 6px; }
+    .header-badge { background: #1890ff; padding: 4px 12px; border-radius: 4px; font-size: 12px; }
+    
+    .layout { display: flex; min-height: 600px; }
+    .sidebar { width: 300px; background: #fafafa; border-right: 1px solid #e8e8e8; padding: 16px; }
+    .main { flex: 1; padding: 16px; background: #f5f5f5; }
+    
+    /* Sidebar */
+    .stock-card { background: #fff; padding: 16px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #e8e8e8; }
+    .stock-name { font-size: 18px; font-weight: bold; color: #333; }
+    .stock-symbol { color: #666; font-size: 13px; }
+    
+    .section-title { font-weight: 500; margin-bottom: 10px; color: #333; display: flex; align-items: center; gap: 6px; }
+    .option-group { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .option { padding: 6px 14px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; cursor: pointer; background: #fff; }
+    .option.active { background: #1890ff; color: #fff; border-color: #1890ff; }
+    
+    .checkbox-group { display: flex; gap: 16px; margin-bottom: 16px; }
+    .checkbox { display: flex; align-items: center; gap: 6px; }
+    
+    .analysis-card { background: #fff; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .tabs { display: flex; border-bottom: 2px solid #e8e8e8; margin-bottom: 16px; }
+    .tab { padding: 10px 20px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+    .tab.active { border-bottom-color: #1890ff; color: #1890ff; }
+    
+    .analyze-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; margin-bottom: 16px; font-weight: 500; }
+    
+    /* Thinking Chain */
+    .thinking { background: #fffbe6; border: 1px solid #ffe58f; border-radius: 8px; padding: 12px; margin-bottom: 16px; }
+    .thinking-header { font-weight: bold; color: #fa8c16; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .step { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px; color: #666; }
+    .step.done { color: #52c41a; }
+    .step.active { color: #1890ff; font-weight: 500; }
+    .step.pending { color: #bfbfbf; }
+    
+    /* Analysis Cards */
+    .detail-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+    .detail-title { font-weight: 500; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; font-size: 14px; }
+    .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+    .tag { padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+    .tag.red { background: #fff1f0; color: #f5222d; }
+    .tag.green { background: #f6ffed; color: #52c41a; }
+    .tag.blue { background: #e6f7ff; color: #1890ff; }
+    .tag.purple { background: #f9f0ff; color: #722ed1; }
+    
+    .progress { height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+    .progress-fill { height: 100%; border-radius: 3px; }
+    
+    /* Conclusion */
+    .conclusion { background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 14px; }
+    .conclusion-title { font-weight: bold; color: #52c41a; margin-bottom: 6px; }
+    
+    /* Chart */
+    .chart-card { background: #fff; border-radius: 8px; padding: 16px; }
+    .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .chart-title { font-weight: 500; display: flex; align-items: center; gap: 8px; }
+    .chart-area { height: 350px; background: linear-gradient(180deg, #fafafa 0%, #f0f0f0 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    
+    /* Prediction Tab */
+    .prediction-card { background: #fafafa; border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+    .prediction-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .prediction-horizon { font-weight: bold; font-size: 16px; }
+    .prediction-dir { font-weight: bold; font-size: 16px; }
+    
+    /* Navigation dots */
+    .nav-dots { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+    .nav-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.3s; }
+    .nav-dot.active { background: #fff; transform: scale(1.2); }
+    
+    /* Animation */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.5s ease; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📈 AI 股票分析工具 - 界面预览</h1>
+    
+    <div class="interface fade-in">
+      <!-- Header -->
+      <div class="header">
+        <h2>📈 AI 股票分析</h2>
+        <select style="width:80px;padding:6px;border-radius:4px;border:none;"><option>港股</option></select>
+        <input type="text" placeholder="搜索股票..." />
+        <span class="header-badge">MiniMax 2.7 + 思维链</span>
+      </div>
+      
+      <div class="layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <!-- Stock Info -->
+          <div class="stock-card">
+            <div class="stock-name">🏢 腾讯控股</div>
+            <div class="stock-symbol">00700.HK</div>
+          </div>
+          
+          <!-- K-line Period -->
+          <div class="section-title">📊 K线周期</div>
+          <div class="option-group">
+            <div class="option active">日K</div>
+            <div class="option">周K</div>
+            <div class="option">月K</div>
+          </div>
+          
+          <!-- Options -->
+          <div class="checkbox-group">
+            <label class="checkbox"><input type="checkbox" checked> 成交量</label>
+            <label class="checkbox"><input type="checkbox" checked> KDJ</label>
+          </div>
+          
+          <!-- Analysis Panel -->
+          <div class="analysis-card">
+            <div class="tabs">
+              <div class="tab active">当日分析</div>
+              <div class="tab">区间分析</div>
+              <div class="tab">走势预测</div>
+            </div>
+            
+            <button class="analyze-btn">🔍 开始多维度分析</button>
+            
+            <!-- Thinking Chain -->
+            <div class="thinking">
+              <div class="thinking-header">💡 AI 思维链 <span style="font-weight:normal;font-size:13px;">(4/7)</span></div>
+              <div class="step done">✓ 数据收集</div>
+              <div class="step done">✓ 技术分析</div>
+              <div class="step done">✓ 新闻分析</div>
+              <div class="step done">✓ 宏观分析</div>
+              <div class="step active">⟳ 资金流向分析</div>
+              <div class="step pending">○ 综合结论</div>
+            </div>
+            
+            <!-- Technical -->
+            <div class="detail-card">
+              <div class="detail-title">📊 技术分析</div>
+              <div class="detail-row">
+                <span class="tag red">上涨趋势</span>
+                <span>波动率: 2.35%</span>
+              </div>
+              <div class="detail-row">
+                <span>支撑: 320.50</span>
+                <span>阻力: 350.20</span>
+              </div>
+              <div style="margin-top:8px">
+                <span class="tag blue">均线多头</span>
+                <span class="tag purple">KDJ金叉</span>
+              </div>
+            </div>
+            
+            <!-- News -->
+            <div class="detail-card">
+              <div class="detail-title">📰 新闻分析</div>
+              <div class="detail-row">
+                <span>公司 <span class="tag green">5条 正面</span></span>
+                <span>行业 <span class="tag red">3条 负面</span></span>
+              </div>
+              <div class="detail-row">
+                <span>宏观 <span class="tag blue">2条 中性</span></span>
+                <span>市场 <span class="tag green">8条 正面</span></span>
+              </div>
+            </div>
+            
+            <!-- Capital -->
+            <div class="detail-card">
+              <div class="detail-title">💰 资金流向</div>
+              <div class="detail-row">
+                <span>主力净流入</span>
+                <span style="color:#f5222d;font-weight:bold">+2,850万</span>
+              </div>
+              <div class="progress"><div class="progress-fill" style="width:65%;background:#1890ff"></div></div>
+              <div style="font-size:12px;color:#666;margin-top:4px">大单占比: 65%</div>
+            </div>
+            
+            <!-- Factors -->
+            <div class="detail-card">
+              <div class="detail-title">⚖️ 影响因素权重</div>
+              <div style="margin-bottom:8px">
+                <div class="detail-row"><span>技术分析</span><span>20%</span></div>
+                <div class="progress"><div class="progress-fill" style="width:20%"></div></div>
+              </div>
+              <div style="margin-bottom:8px">
+                <div class="detail-row"><span>新闻分析</span><span>15%</span></div>
+                <div class="progress"><div class="progress-fill" style="width:15%;background:#722ed1"></div></div>
+              </div>
+              <div>
+                <div class="detail-row"><span>资金流向</span><span>20%</span></div>
+                <div class="progress"><div class="progress-fill" style="width:20%"></div></div>
+              </div>
+            </div>
+            
+            <!-- Conclusion -->
+            <div class="conclusion">
+              <div class="conclusion-title">📝 综合结论</div>
+              <div>综合分析显示积极信号，预计短期走势向好</div>
+              <div style="margin-top:8px;display:flex;align-items:center;gap:8px">
+                <span style="font-size:13px">置信度:</span>
+                <div class="progress" style="flex:1"><div class="progress-fill" style="width:75%"></div></div>
+                <span style="font-size:13px;font-weight:bold">75%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">📈 K线图</div>
+              <div><span class="tag red">日K</span> <span class="tag blue">KDJ</span></div>
+            </div>
+            <div class="chart-area">
+              <!-- SVG Candlestick Chart -->
+              <svg width="600" height="320" viewBox="0 0 600 320">
+                <!-- Grid -->
+                <line x1="50" y1="40" x2="550" y2="40" stroke="#e8e8e8" stroke-width="1"/>
+                <line x1="50" y1="100" x2="550" y2="100" stroke="#e8e8e8" stroke-width="1"/>
+                <line x1="50" y1="160" x2="550" y2="160" stroke="#e8e8e8" stroke-width="1"/>
+                <line x1="50" y1="220" x2="550" y2="220" stroke="#e8e8e8" stroke-width="1"/>
+                <line x1="50" y1="280" x2="550" y2="280" stroke="#e8e8e8" stroke-width="1"/>
+                <!-- Y labels -->
+                <text x="45" y="44" text-anchor="end" font-size="10" fill="#999">360</text>
+                <text x="45" y="104" text-anchor="end" font-size="10" fill="#999">340</text>
+                <text x="45" y="164" text-anchor="end" font-size="10" fill="#999">320</text>
+                <text x="45" y="224" text-anchor="end" font-size="10" fill="#999">300</text>
+                <text x="45" y="284" text-anchor="end" font-size="10" fill="#999">280</text>
+                <!-- Candles -->
+                <g fill="#f5222d" stroke="#f5222d">
+                  <line x1="80" y1="90" x2="80" y2="70" stroke-width="2"/><rect x="70" y="75" width="20" height="20"/><line x1="80" y1="95" x2="80" y2="110" stroke-width="2"/>
+                  <line x1="120" y1="100" x2="120" y2="80" stroke-width="2"/><rect x="110" y="85" width="20" height="20"/><line x="120" y1="105" x2="120" y2="120" stroke-width="2"/>
+                  <line x1="200" y1="140" x2="200" y2="100" stroke-width="2"/><rect x="190" y="110" width="20" height="25" fill="#52c41a" stroke="#52c41a"/><line x="200" y1="135" x2="200" y2="155" stroke-width="2"/>
+                  <line x1="240" y1="170" x2="240" y2="130" stroke-width="2"/><rect x="230" y="140" width="20" height="25" fill="#52c41a" stroke="#52c41a"/><line x="240" y1="165" x2="240" y2="185" stroke-width="2"/>
+                  <line x1="320" y1="160" x2="320" y2="120" stroke-width="2"/><rect x="310" y="130" width="20" height="25" fill="#f5222d"/><line x="320" y1="155" x2="320" y2="175" stroke-width="2"/>
+                  <line x1="400" y1="130" x2="400" y2="90" stroke-width="2"/><rect x="390" y="100" width="20" height="25" fill="#f5222d"/><line x="400" y1="125" x2="400" y2="145" stroke-width="2"/>
+                  <line x1="480" y1="110" x2="480" y2="70" stroke-width="2"/><rect x="470" y="80" width="20" height="25" fill="#f5222d"/><line x="480" y1="105" x2="480" y2="125" stroke-width="2"/>
+                </g>
+                <!-- Volume -->
+                <g fill="rgba(245,34,45,0.4)">
+                  <rect x="70" y="240" width="20" height="25"/><rect x="110" y="235" width="20" height="20"/>
+                  <rect x="190" y="245" width="20" height="20" fill="rgba(82,196,26,0.4)"/>
+                  <rect x="230" y="240" width="20" height="25" fill="rgba(82,196,26,0.4)"/>
+                  <rect x="310" y="230" width="20" height="30"/><rect x="390" y="225" width="20" height="35"/>
+                  <rect x="470" y="235" width="20" height="25"/>
+                </g>
+                <!-- X axis -->
+                <text x="80" y="305" text-anchor="middle" font-size="10" fill="#999">1月</text>
+                <text x="160" y="305" text-anchor="middle" font-size="10" fill="#999">2月</text>
+                <text x="240" y="305" text-anchor="middle" font-size="10" fill="#999">3月</text>
+                <text x="320" y="305" text-anchor="middle" font-size="10" fill="#999">4月</text>
+                <text x="400" y="305" text-anchor="middle" font-size="10" fill="#999">5月</text>
+                <text x="480" y="305" text-anchor="middle" font-size="10" fill="#999">6月</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align:center;margin-top:20px;color:#fff;font-size:14px">
+      完整的交互式界面需要运行项目: <span style="background:rgba(255,255,255,0.2);padding:4px 12px;border-radius:4px;">npm run dev && npm run dev:server</span>
+    </div>
+  </div>
+</body>
+</html>
