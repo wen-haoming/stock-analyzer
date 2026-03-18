@@ -1,0 +1,64 @@
+{
+  "name": "stock-analyzer",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:server": "npx nitro dev",
+    "build": "tsc -b && vite build",
+    "build:server": "npx nitro build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "electron:dev": "electron-vite dev",
+    "electron:build": "electron-vite build",
+    "electron:package": "electron-builder --mac"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "@unocss/reset": "^66.6.7",
+    "ai": "^6.0.116",
+    "antd": "^6.3.3",
+    "better-sqlite3": "^12.8.0",
+    "dayjs": "^1.11.20",
+    "drizzle-orm": "^0.45.1",
+    "lightweight-charts": "^5.1.0",
+    "nitropack": "^2.13.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "vercel-ai": "^0.0.0",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@types/node": "^24.12.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@unocss/preset-icons": "^66.6.7",
+    "@unocss/preset-uno": "^66.6.7",
+    "@vitejs/plugin-react": "^6.0.0",
+    "electron": "^41.0.3",
+    "electron-builder": "^26.8.1",
+    "electron-vite": "^5.0.0",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.4.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "unocss": "^66.6.7",
+    "vite": "^8.0.0"
+  },
+  "build": {
+    "appId": "com.stockanalyzer.app",
+    "productName": "AI股票分析",
+    "mac": {
+      "target": "dmg",
+      "icon": "resources/icon.icns"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ]
+  }
+}
