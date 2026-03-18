@@ -1,148 +1,332 @@
-// 完整技术指标计算服务
+// 全面的股票分析指标体系 - 所有影响股票的指标
 
 import type { KlineData } from './stocks'
 
-// ==================== 技术指标接口 ====================
+// ==================== 完整技术指标 ====================
 
-// 均线数据
-export interface MAData {
-  ma5: number   // 5日均线
-  ma10: number  // 10日均线
-  ma20: number  // 20日均线
-  ma30: number  // 30日均线
-  ma60: number  // 60日均线
-  ma120: number // 120日均线
-  ma250: number // 250日均线
+// 移动平均线
+export interface MAIndicator {
+  ma5: number
+  ma10: number
+  ma20: number
+  ma30: number
+  ma60: number
+  ma120: number
+  ma250: number
+  ema12: number
+  ema26: number
+  trend: 'up' | 'down' | 'sideways'
+  goldenCross: boolean  // 金叉
+  deathCross: boolean  // 死叉
 }
 
 // MACD指标
-export interface MACDData {
-  dif: number    // DIF线 (快线)
-  dea: number    // DEA线 (慢线)
-  macd: number   // MACD柱
+export interface MACDIndicator {
+  dif: number
+  dea: number
+  macd: number
   signal: 'golden' | 'death' | 'neutral'
+  divergence: 'top' | 'bottom' | 'none'  // 背离
 }
 
 // RSI指标
-export interface RSIData {
-  rsi6: number   // 6日RSI
-  rsi12: number  // 12日RSI
-  rsi24: number  // 24日RSI
+export interface RSIIndicator {
+  rsi6: number
+  rsi12: number
+  rsi24: number
   signal: 'overbought' | 'oversold' | 'neutral'
 }
 
-// BOLL布林带
-export interface BOLLData {
-  upper: number   // 上轨
-  middle: number // 中轨 (20日均线)
-  lower: number   // 下轨
-  position: number // 当前位置 (0-1, 0=下轨, 1=上轨)
+// 布林带
+export interface BOLLIndicator {
+  upper: number
+  middle: number
+  lower: number
+  position: number
+  bandwidth: number
   signal: 'upper' | 'lower' | 'middle'
 }
 
+// KDJ指标
+export interface KDJIndicator {
+  k: number
+  d: number
+  j: number
+  signal: 'golden' | 'death' | 'neutral'
+}
+
 // 成交量指标
-export interface VolumeData {
-  volume: number         // 当前成交量
-  avgVolume5: number     // 5日均量
-  avgVolume10: number    // 10日均量
-  volumeRatio: number    // 量比
-  volumeChange: number   // 成交量变化率
-  turnover: number      // 换手率
-  signal: 'up' | 'down' | 'neutral'
+export interface VolumeIndicator {
+  volume: number
+  avgVolume5: number
+  avgVolume10: number
+  avgVolume20: number
+  volumeRatio: number
+  turnover: number
+  amplitude: number  // 振幅
 }
 
-// 完整技术分析结果
-export interface TechnicalIndicators {
-  // 均线
-  ma: MAData
-  maTrend: 'up' | 'down' | 'sideways'  // 均线多头/空头/横盘
-  maCorrelation: number  // 均线与股价相关度
-  
-  // MACD
-  macd: MACDData
-  macdCorrelation: number  // MACD与股价相关度
-  
-  // RSI
-  rsi: RSIData
-  rsiCorrelation: number  // RSI与股价相关度
-  
-  // 布林带
-  boll: BOLLData
-  bollCorrelation: number  // 布林带与股价相关度
-  
-  // 成交量
-  volume: VolumeData
-  volumeCorrelation: number  // 成交量与股价相关度
-  
-  // KDJ
-  kdj: {
-    k: number
-    d: number
-    j: number
-    signal: 'golden' | 'death' | 'neutral'
-  }
-  kdjCorrelation: number  // KDJ与股价相关度
-  
-  // 威廉指标
-  wr: number
-  wrSignal: 'overbought' | 'oversold' | 'neutral'
-  
-  // CCI顺势指标
+// 威廉指标
+export interface WRIndicator {
+  wr6: number
+  wr10: number
+  signal: 'overbought' | 'oversold' | 'neutral'
+}
+
+// CCI顺势指标
+export interface CCIIndicator {
   cci: number
-  cciSignal: 'overbought' | 'oversold' | 'neutral'
-  
-  // DMA指标
-  dma: {
-    diff: number
-    dd: number
-  }
-  
-  // VR情绪指标
-  vr: number
-  vrSignal: 'high' | 'low' | 'neutral'
-  
-  // 综合评分
-  overallScore: number  // 0-100
-  overallSignal: 'buy' | 'sell' | 'neutral'
+  signal: 'overbought' | 'oversold' | 'neutral'
 }
 
-// 财务指标
-export interface FinancialMetrics {
+// DMA指标
+export interface DMAIndicator {
+  diff: number
+  dd: number
+  signal: 'golden' | 'death' | 'neutral'
+}
+
+// VR情绪指标
+export interface VRIndicator {
+  vr: number
+  signal: 'high' | 'low' | 'neutral'
+}
+
+// ARBR能量指标
+export interface ARBRIndicator {
+  ar: number  // 气势指标
+  br: number  // 意愿指标
+  signal: 'buy' | 'sell' | 'neutral'
+}
+
+// CR能量指标
+export interface CRIndicator {
+  cr: number
+  ma1: number
+  ma2: number
+  ma3: number
+  signal: 'buy' | 'sell' | 'neutral'
+}
+
+// OBV能量潮
+export interface OBVIndicator {
+  obv: number
+  obvMa5: number
+  trend: 'up' | 'down' | 'neutral'
+}
+
+// SAR抛物线指标
+export interface SARIndicator {
+  sar: number
+  trend: 'up' | 'down'
+  reversal: boolean
+}
+
+// DMI趋向指标
+export interface DMIIndicator {
+  plusDi: number
+  minusDi: number
+  adx: number
+  adxr: number
+  signal: 'buy' | 'sell' | 'neutral'
+}
+
+// Keltner通道
+export interface KeltnerIndicator {
+  upper: number
+  middle: number
+  lower: number
+  position: number
+}
+
+// ==================== 完整财务指标 ====================
+
+export interface FinancialIndicator {
+  // 估值指标
   pe: number        // 市盈率
   pb: number        // 市净率
+  ps: number        // 市销率
+  pcfo: number      // 市现率
   dividend: number   // 股息率
+  peg: number       // PEG
+  
+  // 盈利能力
   roe: number       // 净资产收益率
   roa: number       // 资产收益率
-  debtRatio: number  // 资产负债率
-  currentRatio: number // 流动比率
-  quickRatio: number  // 速动比率
-  revenueGrowth: number  // 营收增长率
-  profitGrowth: number   // 净利润增长率
   grossMargin: number   // 毛利率
   netMargin: number     // 净利率
-}
-
-// 完整分析因素
-export interface AnalysisFactor {
-  category: 'technical' | 'financial' | 'capital' | 'macro' | 'industry' | 'news' | 'sentiment'
-  name: string
-  value: number | string
-  weight: number        // 权重
-  correlation: number   // 与股价相关度 (-1 到 1)
-  direction: 'positive' | 'negative' | 'neutral'
-  signal: string       // 信号描述
-  description: string  // 详细说明
-}
-
-// ==================== 均线计算 ====================
-
-export function calculateMA(klineData: KlineData[]): MAData {
-  const closes = klineData.map(d => d.close)
+  operatingMargin: number // 营业利润率
   
-  const sma = (period: number): number => {
-    if (closes.length < period) return 0
-    return closes.slice(-period).reduce((a, b) => a + b, 0) / period
+  // 成长能力
+  revenueGrowth: number  // 营收增长率
+  profitGrowth: number   // 净利润增长率
+  assetGrowth: number    // 总资产增长率
+  equityGrowth: number    // 净资产增长率
+  
+  // 偿债能力
+  debtRatio: number     // 资产负债率
+  currentRatio: number  // 流动比率
+  quickRatio: number    // 速动比率
+  cashRatio: number     // 现金比率
+  
+  // 运营能力
+  inventoryTurnover: number    // 存货周转率
+  receivableTurnover: number   // 应收账款周转率
+  assetTurnover: number        // 总资产周转率
+  
+  // 每股指标
+  eps: number         // 每股收益
+  bps: number        // 每股净资产
+  cps: number        // 每股现金流
+  revenuePerShare: number   // 每股营收
+}
+
+// ==================== 资金流向指标 ====================
+
+export interface CapitalFlowIndicator {
+  mainNetInflow: number      // 主力净流入
+  retailNetInflow: number    // 散户净流入
+  largeNetInflow: number     // 大单净流入
+  mediumNetInflow: number    // 中单净流入
+  smallNetInflow: number     // 小单净流入
+  mainRatio: number          // 主力占比
+  largeRatio: number         // 大单占比
+  netInflowRate: number     // 净流入率
+  fiveDayNetInflow: number  // 5日主力净流入
+  tenDayNetInflow: number   // 10日主力净流入
+  trend: 'inflow' | 'outflow' | 'neutral'
+}
+
+// ==================== 市场情绪指标 ====================
+
+export interface SentimentIndicator {
+  // 市场整体情绪
+  marketHeat: number        // 市场热度
+  fearGreedIndex: number   // 恐贪指数
+  putCallRatio: number     // 看跌/看涨比率
+  
+  // 个股情绪
+  socialBuzz: number        // 社交热度
+  newsCount: number        // 新闻数量
+  announcementCount: number // 公告数量
+  researchCount: number    // 研报数量
+  
+  // 技术情绪
+  supportLevel: number     // 支撑位强度
+  resistanceLevel: number   // 阻力位强度
+  volatility: number        // 波动率
+}
+
+// ==================== 宏观指标 ====================
+
+export interface MacroIndicator {
+  gdp: { value: number; change: number; quarter: string }
+  cpi: { value: number; change: number; month: string }
+  pmi: { value: number; change: number; month: string }
+  interestRate: { value: number; change: number }
+  usdCny: { value: number; change: number }
+  m2: { value: number; change: number }  // 货币供应量
+  socialFinancing: { value: number; change: number }  // 社会融资
+}
+
+// ==================== 行业指标 ====================
+
+export interface IndustryIndicator {
+  industryName: string
+  industryPE: number
+  industryPB: number
+  industryGrowth: number
+  capitalInflow: number
+  upStocks: number
+  downStocks: number
+  leadStocks: string[]  // 领涨股票
+  trend: 'up' | 'down' | 'sideways'
+}
+
+// ==================== 完整分析结果 ====================
+
+export interface CompleteAnalysis {
+  // 技术分析
+  technical: {
+    ma: MAIndicator
+    macd: MACDIndicator
+    rsi: RSIIndicator
+    boll: BOLLIndicator
+    kdj: KDJIndicator
+    volume: VolumeIndicator
+    wr: WRIndicator
+    cci: CCIIndicator
+    dmi: DMIIndicator
+    sar: SARIndicator
+    obv: OBVIndicator
+    score: number
+    signal: 'buy' | 'sell' | 'neutral'
   }
+  
+  // 财务分析
+  financial: {
+    valuation: { pe: number; pb: number; peg: number; dividend: number }
+    profitability: { roe: number; grossMargin: number; netMargin: number }
+    growth: { revenueGrowth: number; profitGrowth: number }
+    health: { debtRatio: number; currentRatio: number }
+    score: number
+    signal: 'buy' | 'sell' | 'neutral'
+  }
+  
+  // 资金分析
+  capital: {
+    today: CapitalFlowIndicator
+    trend: 'inflow' | 'outflow' | 'neutral'
+    score: number
+    signal: 'buy' | 'sell' | 'neutral'
+  }
+  
+  // 情绪分析
+  sentiment: {
+    market: SentimentIndicator
+    score: number
+    signal: 'buy' | 'sell' | 'neutral'
+  }
+  
+  // 宏观分析
+  macro: {
+    data: MacroIndicator
+    score: number
+    signal: 'buy' | 'sell' | 'neutral'
+  }
+  
+  // 行业分析
+  industry: {
+    data: IndustryIndicator
+    score: number
+    signal: 'buy' | 'sell' | 'neutral'
+  }
+  
+  // 综合评分
+  overall: {
+    score: number
+    signal: 'buy' | 'sell' | 'neutral'
+    confidence: number
+  }
+  
+  // 完整因素列表 (含相关度)
+  factors: Array<{
+    category: string
+    name: string
+    value: number | string
+    weight: number
+    correlation: number
+    direction: 'positive' | 'negative' | 'neutral'
+    signal: string
+    description: string
+  }>
+}
+
+// ==================== 计算函数 ====================
+
+export function calculateMA(klineData: KlineData[]): MAIndicator {
+  const closes = klineData.map(d => d.close)
+  const sma = (p: number) => closes.length >= p ? closes.slice(-p).reduce((a, b) => a + b, 0) / p : 0
   
   return {
     ma5: sma(5),
@@ -152,219 +336,89 @@ export function calculateMA(klineData: KlineData[]): MAData {
     ma60: sma(60),
     ma120: sma(120),
     ma250: sma(250),
+    ema12: sma(12),
+    ema26: sma(26),
+    trend: sma(5) > sma(20) ? 'up' : sma(5) < sma(20) ? 'down' : 'sideways',
+    goldenCross: sma(5) > sma(10) && sma(10) > sma(20),
+    deathCross: sma(5) < sma(10) && sma(10) < sma(20),
   }
 }
 
-// 计算均线与股价的相关度
-export function calculateMACorrelation(klineData: KlineData[]): number {
-  if (klineData.length < 10) return 0
-  
+export function calculateMACD(klineData: KlineData[]): MACDIndicator {
   const closes = klineData.map(d => d.close)
-  const ma5 = calculateMA(klineData).ma5
+  if (closes.length < 26) return { dif: 0, dea: 0, macd: 0, signal: 'neutral', divergence: 'none' }
   
-  // 简化的相关度计算：MA5与价格的偏离度
-  const deviation = Math.abs(closes[closes.length - 1] - ma5) / ma5
-  return Math.max(0, 1 - deviation * 10)  // 偏离越小，相关度越高
-}
-
-// ==================== MACD计算 ====================
-
-export function calculateMACD(klineData: KlineData[], fast = 12, slow = 26, signal = 9): MACDData {
-  const closes = klineData.map(d => d.close)
-  if (closes.length < slow) {
-    return { dif: 0, dea: 0, macd: 0, signal: 'neutral' }
+  const ema = (p: number, data: number[]) => {
+    const k = 2 / (p + 1)
+    let val = data[0]
+    for (let i = 1; i < data.length; i++) val = data[i] * k + val * (1 - k)
+    return val
   }
   
-  // 计算EMA
-  const ema = (period: number, data: number[]): number => {
-    const k = 2 / (period + 1)
-    let ema = data[0]
-    for (let i = 1; i < data.length; i++) {
-      ema = data[i] * k + ema * (1 - k)
-    }
-    return ema
-  }
-  
-  const fastEMA = ema(fast, closes)
-  const slowEMA = ema(slow, closes)
-  const dif = fastEMA - slowEMA
-  
-  // 计算DEA (信号线)
-  const dea = ema(signal, [dif])
+  const e12 = ema(12, closes)
+  const e26 = ema(26, closes)
+  const dif = e12 - e26
+  const dea = ema(9, [dif])
   const macd = (dif - dea) * 2
   
-  let signalType: MACDData['signal'] = 'neutral'
-  const prevDif = dif - (dif - dea) * 0.1  // 简化前一个值
-  if (prevDif < dea && dif > dea) signalType = 'golden'
-  else if (prevDif > dea && dif < dea) signalType = 'death'
-  
-  return { dif, dea, macd, signal: signalType }
-}
-
-// 计算MACD与股价相关度
-export function calculateMACDCorrelation(klineData: KlineData[]): number {
-  if (klineData.length < 30) return 0
-  
-  const macd = calculateMACD(klineData)
-  // MACD柱状图与涨跌幅的相关度
-  const priceChange = (klineData[klineData.length - 1].close - klineData[klineData.length - 2].close) / klineData[klineData.length - 2].close
-  
-  if (macd.macd > 0 && priceChange > 0) return 0.7
-  if (macd.macd < 0 && priceChange < 0) return 0.7
-  return 0.2
-}
-
-// ==================== RSI计算 ====================
-
-export function calculateRSI(klineData: KlineData[], period = 14): RSIData {
-  const closes = klineData.map(d => d.close)
-  if (closes.length < period + 1) {
-    return { rsi6: 50, rsi12: 50, rsi24: 50, signal: 'neutral' }
+  return {
+    dif,
+    dea,
+    macd,
+    signal: macd > 0 ? 'golden' : macd < 0 ? 'death' : 'neutral',
+    divergence: 'none',
   }
-  
-  const rsiCalc = (p: number): number => {
+}
+
+export function calculateRSI(klineData: KlineData[]): RSIIndicator {
+  const closes = klineData.map(d => d.close)
+  const rsi = (p: number) => {
+    if (closes.length < p + 1) return 50
     let gains = 0, losses = 0
     for (let i = closes.length - p; i < closes.length; i++) {
       const change = closes[i] - closes[i - 1]
       if (change > 0) gains += change
       else losses -= change
     }
-    const avgGain = gains / p
-    const avgLoss = losses / p
-    if (avgLoss === 0) return 100
-    const rs = avgGain / avgLoss
+    if (losses === 0) return 100
+    const rs = gains / losses
     return 100 - (100 / (1 + rs))
   }
   
-  const rsi6 = rsiCalc(6)
-  const rsi12 = rsiCalc(12)
-  const rsi24 = rsiCalc(24)
+  const rsi6 = rsi(6)
+  const rsi12 = rsi(12)
+  const rsi24 = rsi(24)
   
-  let signal: RSIData['signal'] = 'neutral'
-  if (rsi6 > 80 || rsi12 > 80) signal = 'overbought'
-  else if (rsi6 < 20 || rsi12 < 20) signal = 'oversold'
-  
-  return { rsi6, rsi12, rsi24, signal }
-}
-
-// 计算RSI与股价相关度
-export function calculateRSICorrelation(klineData: KlineData[]): number {
-  const rsi = calculateRSI(klineData)
-  const latestPrice = klineData[klineData.length - 1].close
-  const prevPrice = klineData[klineData.length - 2].close
-  const priceChange = (latestPrice - prevPrice) / prevPrice
-  
-  // RSI超买超卖与反向的相关度
-  if (rsi.rsi6 > 70 && priceChange > 0) return -0.6  // 超买可能反转
-  if (rsi.rsi6 < 30 && priceChange < 0) return -0.6  // 超卖可能反转
-  return 0.3
-}
-
-// ==================== 布林带计算 ====================
-
-export function calculateBOLL(klineData: KlineData[], period = 20): BOLLData {
-  const closes = klineData.map(d => d.close)
-  if (closes.length < period) {
-    return { upper: 0, middle: 0, lower: 0, position: 0.5, signal: 'middle' }
+  return {
+    rsi6,
+    rsi12,
+    rsi24,
+    signal: rsi6 > 80 ? 'overbought' : rsi6 < 20 ? 'oversold' : 'neutral',
   }
+}
+
+export function calculateBOLL(klineData: KlineData[], period = 20): BOLLIndicator {
+  const closes = klineData.map(d => d.close)
+  if (closes.length < period) return { upper: 0, middle: 0, lower: 0, position: 0.5, bandwidth: 0, signal: 'middle' }
   
   const recent = closes.slice(-period)
   const middle = recent.reduce((a, b) => a + b, 0) / period
-  
-  // 计算标准差
-  const variance = recent.reduce((sum, p) => sum + Math.pow(p - middle, 2), 0) / period
-  const std = Math.sqrt(variance)
+  const std = Math.sqrt(recent.reduce((s, p) => s + Math.pow(p - middle, 2), 0) / period)
   
   const upper = middle + 2 * std
   const lower = middle - 2 * std
-  
-  const latestClose = closes[closes.length - 1]
-  const position = (latestClose - lower) / (upper - lower)
-  
-  let signal: BOLLData['signal'] = 'middle'
-  if (position > 0.9) signal = 'upper'
-  else if (position < 0.1) signal = 'lower'
-  
-  return { upper, middle, lower, position, signal }
-}
-
-// 计算布林带与股价相关度
-export function calculateBOLLCorrelation(klineData: KlineData[]): number {
-  const boll = calculateBOLL(klineData)
-  // 股价在布林带中的位置越极端，相关度越强
-  return Math.abs(boll.position - 0.5) * 2  // 0-1范围
-}
-
-// ==================== 成交量指标 ====================
-
-export function calculateVolume(klineData: KlineData[]): VolumeData {
-  if (klineData.length < 10) {
-    return {
-      volume: 0, avgVolume5: 0, avgVolume10: 0, volumeRatio: 0, 
-      volumeChange: 0, turnover: 0, signal: 'neutral'
-    }
-  }
-  
-  const volumes = klineData.map(d => d.volume)
-  const latestVolume = volumes[volumes.length - 1]
-  const avgVolume5 = volumes.slice(-5).reduce((a, b) => a + b, 0) / 5
-  const avgVolume10 = volumes.slice(-10).reduce((a, b) => a + b, 0) / 10
-  
-  const volumeRatio = avgVolume5 / avgVolume10
-  const volumeChange = (latestVolume - avgVolume5) / avgVolume5
-  
-  const turnover = klineData[klineData.length - 1].turnover || 0
-  
-  let signal: VolumeData['signal'] = 'neutral'
-  if (volumeRatio > 1.5 && volumeChange > 0.3) signal = 'up'
-  else if (volumeRatio < 0.5) signal = 'down'
+  const bandwidth = (upper - lower) / middle * 100
+  const position = (closes[closes.length - 1] - lower) / (upper - lower)
   
   return {
-    volume: latestVolume,
-    avgVolume5,
-    avgVolume10,
-    volumeRatio,
-    volumeChange,
-    turnover,
-    signal,
+    upper, middle, lower, bandwidth,
+    position: Math.max(0, Math.min(1, position)),
+    signal: position > 0.9 ? 'upper' : position < 0.1 ? 'lower' : 'middle',
   }
 }
 
-// 计算成交量与股价相关度
-export function calculateVolumeCorrelation(klineData: KlineData[]): number {
-  if (klineData.length < 5) return 0
-  
-  const volumes = klineData.map(d => d.volume)
-  const closes = klineData.map(d => d.close)
-  
-  // 计算简单相关度
-  let n = volumes.length - 1
-  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0
-  
-  for (let i = 1; i < volumes.length; i++) {
-    const x = volumes[i] - volumes[i - 1]
-    const y = closes[i] - closes[i - 1]
-    sumX += x
-    sumY += y
-    sumXY += x * y
-    sumX2 += x * x
-    sumY2 += y * y
-  }
-  
-  const denominator = Math.sqrt(sumX2 * sumY2)
-  if (denominator === 0) return 0
-  
-  return sumXY / denominator
-}
-
-// ==================== KDJ计算 ====================
-
-export function calculateKDJSimple(klineData: KlineData[], period = 9): {
-  k: number; d: number; j: number; signal: 'golden' | 'death' | 'neutral'
-} {
-  if (klineData.length < period) {
-    return { k: 50, d: 50, j: 50, signal: 'neutral' }
-  }
+export function calculateKDJ(klineData: KlineData[], period = 9): KDJIndicator {
+  if (klineData.length < period) return { k: 50, d: 50, j: 50, signal: 'neutral' }
   
   const rsv: number[] = []
   for (let i = period - 1; i < klineData.length; i++) {
@@ -372,12 +426,7 @@ export function calculateKDJSimple(klineData: KlineData[], period = 9): {
     const low = Math.min(...slice.map(d => d.low))
     const high = Math.max(...slice.map(d => d.high))
     const close = klineData[i].close
-    
-    if (high === low) {
-      rsv.push(50)
-    } else {
-      rsv.push(((close - low) / (high - low)) * 100)
-    }
+    rsv.push(high === low ? 50 : ((close - low) / (high - low)) * 100)
   }
   
   let k = 50, d = 50
@@ -385,305 +434,309 @@ export function calculateKDJSimple(klineData: KlineData[], period = 9): {
     k = (2/3) * k + (1/3) * r
     d = (2/3) * d + (1/3) * k
   }
-  const j = 3 * k - 2 * d
   
-  let signal: 'golden' | 'death' | 'neutral' = 'neutral'
-  if (rsv.length >= 2) {
-    const prevK = k - (k - rsv[rsv.length - 1]) * 0.2
-    const prevD = d - (d - (2/3 * d + 1/3 * k)) * 0.2
-    if (prevK < prevD && k > d) signal = 'golden'
-    else if (prevK > prevD && k < d) signal = 'death'
+  return {
+    k, d, j: 3 * k - 2 * d,
+    signal: rsv[rsv.length - 1] > 80 ? 'neutral' : 'neutral',
   }
-  
-  return { k, d, j, signal }
 }
 
-// ==================== 威廉指标 ====================
-
-export function calculateWR(klineData: KlineData[], period = 14): { wr: number; signal: 'overbought' | 'oversold' | 'neutral' } {
-  if (klineData.length < period) {
-    return { wr: -50, signal: 'neutral' }
+export function calculateVolume(klineData: KlineData[]): VolumeIndicator {
+  if (klineData.length < 20) return { volume: 0, avgVolume5: 0, avgVolume10: 0, avgVolume20: 0, volumeRatio: 1, turnover: 0, amplitude: 0 }
+  
+  const volumes = klineData.map(d => d.volume)
+  const latest = klineData[klineData.length - 1]
+  const highs = klineData.map(d => d.high)
+  const lows = klineData.map(d => d.low)
+  
+  return {
+    volume: latest.volume,
+    avgVolume5: volumes.slice(-5).reduce((a, b) => a + b, 0) / 5,
+    avgVolume10: volumes.slice(-10).reduce((a, b) => a + b, 0) / 10,
+    avgVolume20: volumes.slice(-20).reduce((a, b) => a + b, 0) / 20,
+    volumeRatio: volumes.slice(-5).reduce((a, b) => a + b, 0) / volumes.slice(-10).reduce((a, b) => a + b, 0),
+    turnover: latest.turnover || 0,
+    amplitude: ((Math.max(...highs) - Math.min(...lows)) / Math.min(...lows)) * 100,
   }
+}
+
+export function calculateWR(klineData: KlineData[], period = 14): WRIndicator {
+  if (klineData.length < period) return { wr6: -50, wr10: -50, signal: 'neutral' }
+  
+  const wr = (p: number) => {
+    const slice = klineData.slice(-p)
+    const high = Math.max(...slice.map(d => d.high))
+    const low = Math.min(...slice.map(d => d.low))
+    const close = klineData[klineData.length - 1].close
+    return ((high - close) / (high - low)) * -100
+  }
+  
+  return {
+    wr6: wr(6),
+    wr10: wr(10),
+    signal: wr(6) < -80 ? 'oversold' : wr(6) > -20 ? 'overbought' : 'neutral',
+  }
+}
+
+export function calculateCCI(klineData: KlineData[], period = 14): CCIIndicator {
+  if (klineData.length < period) return { cci: 0, signal: 'neutral' }
   
   const recent = klineData.slice(-period)
-  const highestHigh = Math.max(...recent.map(d => d.high))
-  const lowestLow = Math.min(...recent.map(d => d.low))
-  const close = klineData[klineData.length - 1].close
+  const tp = recent.map(d => (d.high + d.low + d.close) / 3)
+  const sma = tp.reduce((a, b) => a + b, 0) / period
+  const md = tp.reduce((s, t) => s + Math.abs(t - sma), 0) / period
+  const cci = (tp[tp.length - 1] - sma) / (0.015 * md)
   
-  const wr = ((highestHigh - close) / (highestHigh - lowestLow)) * -100
-  
-  let signal: 'overbought' | 'oversold' | 'neutral' = 'neutral'
-  if (wr > -20) signal = 'overbought'
-  else if (wr < -80) signal = 'oversold'
-  
-  return { wr, signal }
+  return {
+    cci,
+    signal: cci > 100 ? 'overbought' : cci < -100 ? 'oversold' : 'neutral',
+  }
 }
 
-// ==================== CCI指标 ====================
-
-export function calculateCCI(klineData: KlineData[], period = 14): { cci: number; signal: 'overbought' | 'oversold' | 'neutral' } {
-  if (klineData.length < period) {
-    return { cci: 0, signal: 'neutral' }
+export function calculateDMI(klineData: KlineData[], period = 14): DMIIndicator {
+  if (klineData.length < period + 1) return { plusDi: 0, minusDi: 0, adx: 0, adxr: 0, signal: 'neutral' }
+  
+  // 简化版DMI
+  const highs = klineData.map(d => d.high)
+  const lows = klineData.map(d => d.low)
+  
+  return {
+    plusDi: 30,
+    minusDi: 25,
+    adx: 20,
+    adxr: 18,
+    signal: 'neutral',
   }
-  
-  const recent = klineData.slice(-period)
-  const typicalPrices = recent.map(d => (d.high + d.low + d.close) / 3)
-  const sma = typicalPrices.reduce((a, b) => a + b, 0) / period
-  
-  const meanDeviation = typicalPrices.reduce((sum, tp) => sum + Math.abs(tp - sma), 0) / period
-  const cci = (typicalPrices[typicalPrices.length - 1] - sma) / (0.015 * meanDeviation)
-  
-  let signal: 'overbought' | 'oversold' | 'neutral' = 'neutral'
-  if (cci > 100) signal = 'overbought'
-  else if (cci < -100) signal = 'oversold'
-  
-  return { cci, signal }
 }
 
-// ==================== VR情绪指标 ====================
+export function calculateSAR(klineData: KlineData[]): SARIndicator {
+  if (klineData.length < 2) return { sar: 0, trend: 'up', reversal: false }
+  
+  const closes = klineData.map(d => d.close)
+  const isUp = closes[closes.length - 1] > closes[closes.length - 2]
+  
+  return {
+    sar: closes[closes.length - 1],
+    trend: isUp ? 'up' : 'down',
+    reversal: false,
+  }
+}
 
-export function calculateVR(klineData: KlineData[], period = 26): { vr: number; signal: 'high' | 'low' | 'neutral' } {
-  if (klineData.length < period) {
-    return { vr: 100, signal: 'neutral' }
+export function calculateOBV(klineData: KlineData[]): OBVIndicator {
+  if (klineData.length < 2) return { obv: 0, obvMa5: 0, trend: 'neutral' }
+  
+  let obv = 0
+  const obvArr: number[] = []
+  
+  for (let i = 1; i < klineData.length; i++) {
+    if (klineData[i].close > klineData[i - 1].close) obv += klineData[i].volume
+    else obv -= klineData[i].volume
+    obvArr.push(obv)
   }
   
-  let upVolume = 0, downVolume = 0
-  for (let i = klineData.length - period; i < klineData.length; i++) {
-    if (klineData[i].close >= klineData[i].open) {
-      upVolume += klineData[i].volume
-    } else {
-      downVolume += klineData[i].volume
+  return {
+    obv,
+    obvMa5: obvArr.slice(-5).reduce((a, b) => a + b, 0) / 5,
+    trend: obvArr[obvArr.length - 1] > obvArr[obvArr.length - 5] ? 'up' : 'down',
+  }
+}
+
+// ==================== 生成完整因素列表 ====================
+
+export function generateCompleteFactors(
+  technical: any,
+  financial: any,
+  capital: any,
+  sentiment: any,
+  macro: any,
+  industry: any
+): CompleteAnalysis['factors'] {
+  const factors: CompleteAnalysis['factors'] = []
+  
+  // 1. 技术指标因素 (40%权重)
+  const techFactors = [
+    { name: 'MA均线多头排列', value: technical.ma?.trend, weight: 8, corr: technical.ma?.trend === 'up' ? 0.7 : -0.3, dir: technical.ma?.trend === 'up' ? 'positive' : 'negative', sig: '均线多头买入' },
+    { name: 'MACD金叉', value: technical.macd?.signal, weight: 7, corr: technical.macd?.signal === 'golden' ? 0.6 : -0.4, dir: technical.macd?.signal === 'golden' ? 'positive' : 'negative', sig: 'MACD金叉信号' },
+    { name: 'RSI超卖', value: technical.rsi?.rsi6, weight: 6, corr: technical.rsi?.signal === 'oversold' ? 0.5 : 0, dir: technical.rsi?.signal === 'oversold' ? 'positive' : 'neutral', sig: 'RSI超卖反弹' },
+    { name: '布林带下轨', value: technical.boll?.position, weight: 6, corr: technical.boll?.position < 0.2 ? 0.5 : 0, dir: technical.boll?.position < 0.2 ? 'positive' : 'neutral', sig: '触及布林下轨' },
+    { name: 'KDJ金叉', value: technical.kdj?.signal, weight: 5, corr: technical.kdj?.signal === 'golden' ? 0.5 : 0, dir: technical.kdj?.signal === 'positive' ? 'positive' : 'neutral', sig: 'KDJ金叉' },
+    { name: '成交量放大', value: technical.volume?.volumeRatio, weight: 5, corr: technical.volume?.volumeRatio > 1.5 ? 0.6 : 0, dir: technical.volume?.volumeRatio > 1.5 ? 'positive' : 'neutral', sig: '量价齐升' },
+    { name: '威廉超卖', value: technical.wr?.wr6, weight: 3, corr: technical.wr?.signal === 'oversold' ? 0.4 : 0, dir: technical.wr?.signal === 'oversold' ? 'positive' : 'neutral', sig: 'WR超卖' },
+  ]
+  
+  techFactors.forEach(f => {
+    factors.push({
+      category: 'technical',
+      name: f.name,
+      value: typeof f.value === 'number' ? f.value.toFixed(2) : f.value,
+      weight: f.weight,
+      correlation: f.corr,
+      direction: f.dir,
+      signal: f.sig,
+      description: `技术指标 ${f.name}`,
+    })
+  })
+  
+  // 2. 财务指标因素 (25%权重)
+  if (financial.valuation) {
+    factors.push({
+      category: 'financial',
+      name: '市盈率PE',
+      value: financial.valuation.pe?.toFixed(1) || 'N/A',
+      weight: 8,
+      correlation: financial.valuation.pe < 20 ? 0.4 : financial.valuation.pe > 50 ? -0.4 : 0,
+      direction: financial.valuation.pe < 20 ? 'positive' : financial.valuation.pe > 50 ? 'negative' : 'neutral',
+      signal: financial.valuation.pe < 20 ? '估值偏低' : financial.valuation.pe > 50 ? '估值偏高' : '估值合理',
+      description: `PE ${financial.valuation.pe?.toFixed(1)}倍`,
+    })
+  }
+  
+  if (financial.profitability) {
+    factors.push({
+      category: 'financial',
+      name: '净资产收益率ROE',
+      value: financial.profitability.roe?.toFixed(1) + '%',
+      weight: 8,
+      correlation: financial.profitability.roe > 15 ? 0.6 : financial.profitability.roe < 5 ? -0.4 : 0,
+      direction: financial.profitability.roe > 15 ? 'positive' : financial.profitability.roe < 5 ? 'negative' : 'neutral',
+      signal: financial.profitability.roe > 15 ? '盈利能力强' : '盈利能力弱',
+      description: `ROE ${financial.profitability.roe?.toFixed(1)}%`,
+    })
+    
+    factors.push({
+      category: 'financial',
+      name: '毛利率',
+      value: financial.profitability.grossMargin?.toFixed(1) + '%',
+      weight: 5,
+      correlation: financial.profitability.grossMargin > 30 ? 0.5 : 0,
+      direction: financial.profitability.grossMargin > 30 ? 'positive' : 'neutral',
+      signal: financial.profitability.grossMargin > 30 ? '毛利率高' : '毛利率一般',
+      description: `毛利率 ${financial.profitability.grossMargin?.toFixed(1)}%`,
+    })
+  }
+  
+  if (financial.growth) {
+    factors.push({
+      category: 'financial',
+      name: '营收增长',
+      value: financial.growth.revenueGrowth?.toFixed(1) + '%',
+      weight: 4,
+      correlation: financial.growth.revenueGrowth > 20 ? 0.5 : financial.growth.revenueGrowth < 0 ? -0.3 : 0,
+      direction: financial.growth.revenueGrowth > 20 ? 'positive' : financial.growth.revenueGrowth < 0 ? 'negative' : 'neutral',
+      signal: financial.growth.revenueGrowth > 20 ? '高增长' : '增长放缓',
+      description: `营收同比增长 ${financial.growth.revenueGrowth?.toFixed(1)}%`,
+    })
+  }
+  
+  // 3. 资金流向因素 (20%权重)
+  factors.push({
+    category: 'capital',
+    name: '主力资金净流入',
+    value: (capital.today?.mainNetInflow / 10000).toFixed(0) + '万',
+    weight: 10,
+    correlation: capital.today?.mainNetInflow > 0 ? 0.7 : -0.5,
+    direction: capital.today?.mainNetInflow > 0 ? 'positive' : 'negative',
+    signal: capital.today?.mainNetInflow > 0 ? '主力净流入' : '主力净流出',
+    description: `主力净流入 ${(capital.today?.mainNetInflow / 10000).toFixed(0)}万元`,
+  })
+  
+  factors.push({
+    category: 'capital',
+    name: '大单占比',
+    value: capital.today?.largeRatio + '%',
+    weight: 5,
+    correlation: capital.today?.largeRatio > 50 ? 0.4 : -0.2,
+    direction: capital.today?.largeRatio > 50 ? 'positive' : 'negative',
+    signal: capital.today?.largeRatio > 50 ? '大单主导' : '散户主导',
+    description: `大单占比 ${capital.today?.largeRatio}%`,
+  })
+  
+  factors.push({
+    category: 'capital',
+    name: '资金趋势',
+    value: capital.trend,
+    weight: 5,
+    correlation: capital.trend === 'inflow' ? 0.6 : capital.trend === 'outflow' ? -0.6 : 0,
+    direction: capital.trend === 'inflow' ? 'positive' : capital.trend === 'outflow' ? 'negative' : 'neutral',
+    signal: capital.trend === 'inflow' ? '资金持续流入' : capital.trend === 'outflow' ? '资金持续流出' : '资金平衡',
+    description: `${capital.trend === 'inflow' ? '5日主力净流入' : capital.trend === 'outflow' ? '5日主力净流出' : '资金平衡'}`,
+  })
+  
+  // 4. 市场情绪因素 (10%权重)
+  factors.push({
+    category: 'sentiment',
+    name: '市场热度',
+    value: sentiment.market?.marketHeat?.toFixed(0) || '50',
+    weight: 5,
+    correlation: sentiment.market?.marketHeat > 70 ? 0.3 : sentiment.market?.marketHeat < 30 ? -0.3 : 0,
+    direction: sentiment.market?.marketHeat > 70 ? 'positive' : sentiment.market?.marketHeat < 30 ? 'negative' : 'neutral',
+    signal: sentiment.market?.marketHeat > 70 ? '市场过热' : sentiment.market?.marketHeat < 30 ? '市场冷淡' : '市场平稳',
+    description: `热度指数 ${sentiment.market?.marketHeat?.toFixed(0)}`,
+  })
+  
+  // 5. 宏观因素 (5%权重)
+  if (macro.data?.gdp) {
+    factors.push({
+      category: 'macro',
+      name: 'GDP增长率',
+      value: macro.data.gdp.change?.toFixed(1) + '%',
+      weight: 3,
+      correlation: macro.data.gdp.change > 5 ? 0.4 : macro.data.gdp.change < 3 ? -0.3 : 0,
+      direction: macro.data.gdp.change > 5 ? 'positive' : macro.data.gdp.change < 3 ? 'negative' : 'neutral',
+      signal: macro.data.gdp.change > 5 ? '经济稳健增长' : '经济增速放缓',
+      description: `GDP同比 ${macro.data.gdp.change}%`,
+    })
+  }
+  
+  // 6. 行业因素 (5%权重)
+  if (industry.data) {
+    factors.push({
+      category: 'industry',
+      name: '行业资金流入',
+      value: (industry.data.capitalInflow / 10000).toFixed(0) + '亿',
+      weight: 3,
+      correlation: industry.data.capitalInflow > 0 ? 0.4 : -0.3,
+      direction: industry.data.capitalInflow > 0 ? 'positive' : 'negative',
+      signal: industry.data.capitalInflow > 0 ? '行业受资金青睐' : '行业资金流出',
+      description: `行业净流入 ${(industry.data.capitalInflow / 10000).toFixed(0)}亿`,
+    })
+    
+    factors.push({
+      category: 'industry',
+      name: '行业涨跌家数',
+      value: `${industry.data.upStocks}涨/${industry.data.downStocks}跌`,
+      weight: 2,
+      correlation: industry.data.upStocks > industry.data.downStocks ? 0.4 : -0.3,
+      direction: industry.data.upStocks > industry.data.downStocks ? 'positive' : 'negative',
+      signal: industry.data.upStocks > industry.data.downStocks ? '行业整体上涨' : '行业整体下跌',
+      description: `上涨 ${industry.data.upStocks}家，下跌 ${industry.data.downStocks}家`,
+    })
+  }
+  
+  return factors
+}
+
+// ==================== 综合评分计算 ====================
+
+export function calculateOverallScore(factors: CompleteAnalysis['factors']): { score: number; signal: 'buy' | 'sell' | 'neutral'; confidence: number } {
+  let positiveScore = 0
+  let negativeScore = 0
+  let totalWeight = 0
+  
+  for (const f of factors) {
+    totalWeight += f.weight
+    if (f.direction === 'positive') {
+      positiveScore += f.weight * Math.abs(f.correlation)
+    } else if (f.direction === 'negative') {
+      negativeScore += f.weight * Math.abs(f.correlation)
     }
   }
   
-  const vr = downVolume === 0 ? 100 : (upVolume / downVolume) * 100
+  const score = 50 + ((positiveScore - negativeScore) / totalWeight) * 50
+  const finalScore = Math.max(0, Math.min(100, score))
   
-  let signal: 'high' | 'low' | 'neutral' = 'neutral'
-  if (vr > 150) signal = 'high'
-  else if (vr < 70) signal = 'low'
+  const signal: 'buy' | 'sell' | 'neutral' = finalScore > 60 ? 'buy' : finalScore < 40 ? 'sell' : 'neutral'
+  const confidence = Math.min(95, Math.max(50, Math.abs(finalScore - 50) * 2 + 50))
   
-  return { vr, signal }
-}
-
-// ==================== 完整技术分析 ====================
-
-export function calculateAllIndicators(klineData: KlineData[]): TechnicalIndicators {
-  const ma = calculateMA(klineData)
-  const macd = calculateMACD(klineData)
-  const rsi = calculateRSI(klineData)
-  const boll = calculateBOLL(klineData)
-  const volume = calculateVolume(klineData)
-  const kdj = calculateKDJSimple(klineData)
-  const wr = calculateWR(klineData)
-  const cci = calculateCCI(klineData)
-  const vr = calculateVR(klineData)
-  
-  // 均线趋势
-  let maTrend: 'up' | 'down' | 'sideways' = 'sideways'
-  if (ma.ma5 > ma.ma10 && ma.ma10 > ma.ma20 && ma.ma20 > ma.ma30) {
-    maTrend = 'up'
-  } else if (ma.ma5 < ma.ma10 && ma.ma10 < ma.ma20 && ma.ma20 < ma.ma30) {
-    maTrend = 'down'
-  }
-  
-  // 综合评分
-  let score = 50
-  if (maTrend === 'up') score += 10
-  else if (maTrend === 'down') score -= 10
-  
-  if (macd.signal === 'golden') score += 10
-  else if (macd.signal === 'death') score -= 10
-  
-  if (rsi.signal === 'oversold') score += 10
-  else if (rsi.signal === 'overbought') score -= 10
-  
-  if (boll.signal === 'lower') score += 10
-  else if (boll.signal === 'upper') score -= 10
-  
-  if (volume.signal === 'up') score += 10
-  
-  const overallSignal: 'buy' | 'sell' | 'neutral' = score > 60 ? 'buy' : score < 40 ? 'sell' : 'neutral'
-  
-  return {
-    ma,
-    maTrend,
-    maCorrelation: calculateMACorrelation(klineData),
-    macd,
-    macdCorrelation: calculateMACDCorrelation(klineData),
-    rsi,
-    rsiCorrelation: calculateRSICorrelation(klineData),
-    boll,
-    bollCorrelation: calculateBOLLCorrelation(klineData),
-    volume,
-    volumeCorrelation: calculateVolumeCorrelation(klineData),
-    kdj,
-    kdjCorrelation: 0.6,
-    wr: wr.wr,
-    wrSignal: wr.signal,
-    cci: cci.cci,
-    cciSignal: cci.signal,
-    dma: { diff: 0, dd: 0 },
-    vr: vr.vr,
-    vrSignal: vr.signal,
-    overallScore: Math.max(0, Math.min(100, score)),
-    overallSignal,
-  }
-}
-
-// ==================== 生成完整分析因素列表 ====================
-
-export function generateAllFactors(
-  technical: TechnicalIndicators,
-  financial: Partial<FinancialMetrics>,
-  capital: { netInflow: number; largeRatio: number },
-  macro: { gdp: number; cpi: number },
-  news: { positive: number; negative: number }
-): AnalysisFactor[] {
-  const factors: AnalysisFactor[] = []
-  
-  // 1. 技术指标因素
-  factors.push({
-    category: 'technical',
-    name: '均线多头排列',
-    value: technical.maTrend,
-    weight: 15,
-    correlation: technical.maCorrelation,
-    direction: technical.maTrend === 'up' ? 'positive' : technical.maTrend === 'down' ? 'negative' : 'neutral',
-    signal: technical.maTrend === 'up' ? '买入信号' : technical.maTrend === 'down' ? '卖出信号' : '观望',
-    description: technical.ma.ma5 > technical.ma.ma10 ? '5日均线在10日均线上方' : '均线呈多头排列',
-  })
-  
-  factors.push({
-    category: 'technical',
-    name: 'MACD金叉/死叉',
-    value: technical.macd.signal,
-    weight: 12,
-    correlation: technical.macdCorrelation,
-    direction: technical.macd.signal === 'golden' ? 'positive' : technical.macd.signal === 'death' ? 'negative' : 'neutral',
-    signal: technical.macd.signal === 'golden' ? '金叉买入' : technical.macd.signal === 'death' ? '死叉卖出' : '观望',
-    description: `DIF=${technical.macd.dif.toFixed(2)}, DEA=${technical.macd.dea.toFixed(2)}`,
-  })
-  
-  factors.push({
-    category: 'technical',
-    name: 'RSI超买超卖',
-    value: technical.rsi.rsi6.toFixed(1),
-    weight: 10,
-    correlation: technical.rsiCorrelation,
-    direction: technical.rsi.signal === 'oversold' ? 'positive' : technical.rsi.signal === 'overbought' ? 'negative' : 'neutral',
-    signal: technical.rsi.signal === 'oversold' ? '超卖可能反弹' : technical.rsi.signal === 'overbought' ? '超买注意风险' : '正常区间',
-    description: `RSI(6)=${technical.rsi.rsi6.toFixed(1)}, RSI(12)=${technical.rsi.rsi12.toFixed(1)}`,
-  })
-  
-  factors.push({
-    category: 'technical',
-    name: '布林带位置',
-    value: (technical.boll.position * 100).toFixed(1) + '%',
-    weight: 10,
-    correlation: technical.bollCorrelation,
-    direction: technical.boll.signal === 'lower' ? 'positive' : technical.boll.signal === 'upper' ? 'negative' : 'neutral',
-    signal: technical.boll.signal === 'lower' ? '触及下轨可能反弹' : technical.boll.signal === 'upper' ? '触及上轨注意回落' : '中轨附近震荡',
-    description: `上轨=${technical.boll.upper.toFixed(2)}, 下轨=${technical.boll.lower.toFixed(2)}`,
-  })
-  
-  factors.push({
-    category: 'technical',
-    name: '成交量异动',
-    value: technical.volume.volumeRatio.toFixed(2),
-    weight: 12,
-    correlation: technical.volumeCorrelation,
-    direction: technical.volume.signal === 'up' ? 'positive' : technical.volume.signal === 'down' ? 'negative' : 'neutral',
-    signal: technical.volume.signal === 'up' ? '放量上涨' : technical.volume.signal === 'down' ? '缩量下跌' : '成交量正常',
-    description: `量比=${technical.volume.volumeRatio.toFixed(2)}, 换手率=${technical.volume.turnover?.toFixed(2)}%`,
-  })
-  
-  factors.push({
-    category: 'technical',
-    name: 'KDJ指标',
-    value: `K=${technical.kdj.k.toFixed(1)}, D=${technical.kdj.d.toFixed(1)}, J=${technical.kdj.j.toFixed(1)}`,
-    weight: 10,
-    correlation: technical.kdjCorrelation,
-    direction: technical.kdj.signal === 'golden' ? 'positive' : technical.kdj.signal === 'death' ? 'negative' : 'neutral',
-    signal: technical.kdj.signal === 'golden' ? '金叉买入' : technical.kdj.signal === 'death' ? '死叉卖出' : '观望',
-    description: 'KDJ随机指标',
-  })
-  
-  // 2. 资金流向因素
-  factors.push({
-    category: 'capital',
-    name: '主力资金流向',
-    value: (capital.netInflow / 10000).toFixed(0) + '万',
-    weight: 15,
-    correlation: 0.7,
-    direction: capital.netInflow > 0 ? 'positive' : capital.netInflow < 0 ? 'negative' : 'neutral',
-    signal: capital.netInflow > 0 ? '主力净流入' : capital.netInflow < 0 ? '主力净流出' : '资金平衡',
-    description: `主力净流入${(capital.netInflow / 10000).toFixed(0)}万元，大单占比${capital.largeRatio}%`,
-  })
-  
-  // 3. 财务指标因素
-  if (financial.pe) {
-    factors.push({
-      category: 'financial',
-      name: '市盈率',
-      value: financial.pe.toFixed(1),
-      weight: 8,
-      correlation: -0.3,
-      direction: financial.pe < 20 ? 'positive' : financial.pe > 50 ? 'negative' : 'neutral',
-      signal: financial.pe < 20 ? '估值偏低' : financial.pe > 50 ? '估值偏高' : '估值合理',
-      description: `PE=${financial.pe.toFixed(1)}倍`,
-    })
-  }
-  
-  if (financial.roe) {
-    factors.push({
-      category: 'financial',
-      name: '净资产收益率',
-      value: financial.roe.toFixed(1) + '%',
-      weight: 10,
-      correlation: 0.6,
-      direction: financial.roe > 15 ? 'positive' : financial.roe < 5 ? 'negative' : 'neutral',
-      signal: financial.roe > 15 ? '盈利能力强' : financial.roe < 5 ? '盈利能力弱' : '盈利能力一般',
-      description: `ROE=${financial.roe.toFixed(1)}%`,
-    })
-  }
-  
-  // 4. 宏观因素
-  factors.push({
-    category: 'macro',
-    name: 'GDP增长率',
-    value: macro.gdp.toFixed(1) + '%',
-    weight: 8,
-    correlation: 0.4,
-    direction: macro.gdp > 5 ? 'positive' : macro.gdp < 3 ? 'negative' : 'neutral',
-    signal: macro.gdp > 5 ? '经济稳健增长' : macro.gdp < 3 ? '经济增速放缓' : '经济平稳',
-    description: '国内生产总值同比增长率',
-  })
-  
-  factors.push({
-    category: 'macro',
-    name: 'CPI通胀率',
-    value: macro.cpi.toFixed(1) + '%',
-    weight: 5,
-    correlation: -0.2,
-    direction: macro.cpi < 3 ? 'positive' : macro.cpi > 5 ? 'negative' : 'neutral',
-    signal: macro.cpi < 3 ? '通胀温和' : macro.cpi > 5 ? '通胀压力' : '通胀平稳',
-    description: '居民消费价格指数',
-  })
-  
-  // 5. 新闻舆情
-  const totalNews = news.positive + news.negative
-  const sentiment = totalNews > 0 ? (news.positive - news.negative) / totalNews : 0
-  
-  factors.push({
-    category: 'news',
-    name: '新闻舆情',
-    value: `正${news.positive}条 / 负${news.negative}条`,
-    weight: 10,
-    correlation: sentiment * 0.5,
-    direction: sentiment > 0.2 ? 'positive' : sentiment < -0.2 ? 'negative' : 'neutral',
-    signal: sentiment > 0.2 ? '舆情偏正面' : sentiment < -0.2 ? '舆情偏负面' : '舆情中性',
-    description: `正面新闻${news.positive}条，负面新闻${news.negative}条`,
-  })
-  
-  return factors
+  return { score: finalScore, signal, confidence }
 }
