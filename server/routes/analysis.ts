@@ -1,53 +1,52 @@
 // AI 分析 API 路由
 
-import { getStockKline } from '../services/fetchers/stocks'
-import { fetchStockNews } from '../services/fetchers/news'
-import { analyzeToday, analyzeRange, predictFuture } from '../services/ai'
+import { 
+  analyzeToday, 
+  analyzeRange, 
+  analyzePredict,
+  type AnalysisType 
+} from '../services/ai'
+import type { MarketType, KlineType } from '../services/fetchers/stocks'
 
 export default defineEventHandler(async (event) => {
   const method = event.method
-  const query = getQuery(event)
-  const body = await readBody(event).catch(() => null)
+  
+  if (method === 'POST') {
+    const body = await readBody(event)
+    const { type, market, symbol, klineType, startDate, endDate } = body as {
+      type: AnalysisType
+      market: MarketType
+      symbol: string
+      klineType?: KlineType
+      startDate?: string
+      endDate?: string
+    }
 
-  // POST /api/analysis/today
-  if (method === 'POST' && body?.type === 'today') {
-    const { market, symbol, klineType = '101' } = body
-    
-    // 获取数据
-    const endDate = new Date().toISOString().split('T')[0]
-    const startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-    
-    const klineData = await getStockKline(market, symbol, startDate, endDate, klineType)
-    const news = await fetchStockNews(market, symbol)
-    
-    const result = await analyzeToday(market, symbol, klineData, news)
-    return result
+    try {
+      if (type === 'today') {
+        const result = await analyzeToday(market, symbol, klineType || '101')
+        return result
+      } 
+      
+      if (type === 'range') {
+        if (!startDate || !endDate) {
+          return { error: 'startDate and endDate are required for range analysis' }
+        }
+        const result = await analyzeRange(market, symbol, startDate, endDate, klineType || '101')
+        return result
+      }
+      
+      if (type === 'predict') {
+        const result = await analyzePredict(market, symbol, klineType || '101')
+        return result
+      }
+      
+      return { error: 'Invalid analysis type' }
+    } catch (error) {
+      console.error('Analysis error:', error)
+      return { error: 'Analysis failed: ' + String(error) }
+    }
   }
 
-  // POST /api/analysis/range
-  if (method === 'POST' && body?.type === 'range') {
-    const { market, symbol, startDate, endDate, klineType = '101' } = body
-    
-    const klineData = await getStockKline(market, symbol, startDate, endDate, klineType)
-    const news = await fetchStockNews(market, symbol)
-    
-    const result = await analyzeRange(market, symbol, startDate, endDate, klineData, news)
-    return result
-  }
-
-  // POST /api/analysis/predict
-  if (method === 'POST' && body?.type === 'predict') {
-    const { market, symbol, klineType = '101' } = body
-    
-    const endDate = new Date().toISOString().split('T')[0]
-    const startDate = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-    
-    const klineData = await getStockKline(market, symbol, startDate, endDate, klineType)
-    const news = await fetchStockNews(market, symbol)
-    
-    const result = await predictFuture(market, symbol, klineData, news)
-    return result
-  }
-
-  return { error: 'Invalid request' }
+  return { error: 'Method not allowed' }
 })
